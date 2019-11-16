@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.kk4vcz.goodv.ProgramFragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <!-- Simple shellcode that writes FF's to a lot of SRAM, then gracefully continues.-->
+            <EditText
+                android:id="@+id/program_text"
+                android:text="\@FE00
+\n31 40 00 2C 3C 40 02 1E 0D 43 3E 40 00 01 B0 12
+\n48 FE 0C 43 B0 12 3C FE 4D 43 3E 40 02 1E 0C 4D
+\n0C 5D 0C 5C 0C 5E BC 43 00 00 BC 43 02 00 1D 53
+\n3D 90 40 00 F4 23 92 43 08 08 30 41 B0 12 18 FE
+\nB0 12 12 50 30 40 44 FE 0F 4C 0E 5C 0F 9E 01 20
+\n30 41 CF 4D 00 00 1F 53 30 40 4C FE
+\n@FE18
+\nx q
+"
+                android:fontFamily="serif-monospace"
+                android:textSize="6pt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </ScrollView>
+
+
+        <!--Invisible to start, but we'll show it during the access. -->
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible" />
+        <Button
+            android:id="@+id/program_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tap to Write FRAM" />
+    </LinearLayout>
+
+</FrameLayout>
