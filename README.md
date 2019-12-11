@@ -21,6 +21,13 @@ Cheers from Yverdon les Bains,
 
 --Travis Goodspeed
 
+## Prebuilt Releases
+
+Prebuilt APKs of GoodV for those wanting to use it with RF430 chips
+are available in the
+[Releases](https://github.com/travisgoodspeed/GoodV/releases) section
+of the Github page.
+
 ## Building in Android Studio
 
 GoodV is developed with [Android
