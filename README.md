@@ -21,6 +21,32 @@ Cheers from Yverdon les Bains,
 
 --Travis Goodspeed
 
+## Building in Android Studio
+
+GoodV is developed with [Android
+Studio](https://developer.android.com/studio).  Begin by choosing
+"Check out project from Version Control", then give
+`https://github.com/travisgoodspeed/GoodV` as the URL.
+
+With a little luck it will simply compile, but there might be a
+mismatch of the Gradle version and the IDE's plugin.  If the Gradle
+sync fails, either try the "Install missing platforms and sync
+project" option or update the project's build target to something more
+modern.  Sometimes it helps to jump forward in fewer target revisions,
+rather than trying to go all the way to the latest major release.
+
+## Building with the Gradle Wrapper
+
+While Android Studio is damned handy as an IDE, some of us stubborn
+ol' fogeys demand a way to compile code from the command line like a
+proper gentleman would.  For that, use `./gradlew` on Unix or
+`graldew.bat` in Windows.
+
+You can compile with `./gradlew clean` and then `./gradlew assemble`,
+then install with `./gradlew installDebug`.  For a full list of
+targets run `./gradle tasks`, and for convenience, a `Makefile`
+wrapper is also included.
+
 ## Related Projects
 
 [GoodTag](https://github.com/travisgoodspeed/goodtag) is an open
