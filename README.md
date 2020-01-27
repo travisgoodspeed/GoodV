@@ -54,6 +54,12 @@ then install with `./gradlew installDebug`.  For a full list of
 targets run `./gradle tasks`, and for convenience, a `Makefile`
 wrapper is also included.
 
+## News
+
+Update Jan 27, 2020 -- RF430TAL152H can be erased and reset (@cryptax)
+
+We will talk about that at [TROOPERS 2020](https://www.troopers.de/).
+
 ## Related Projects
 
 [GoodTag](https://github.com/travisgoodspeed/goodtag) is an open

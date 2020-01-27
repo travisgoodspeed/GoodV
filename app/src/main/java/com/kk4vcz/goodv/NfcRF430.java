@@ -46,10 +46,13 @@ public abstract class NfcRF430 implements TagTechnology {
             case 0x07: //Texas Instruments is our primary target.
                 switch (tagid[5]) {
                     case 0: //Tag-IT
+                        Log.d("GoodV", "TAG-IT");
                         return new NfcRF430TAGIT(tag);
                     case (byte) 0xA2: //Stock ROM of RF430FRL152H.
+                        Log.d("GoodV", "RF430FRL");
                         return new NfcRF430FRL(tag);
                     case (byte) 0xA0: //GCM ROM of the RF430TAL152H.
+                        Log.d("GoodV", "RF430TAL");
                         return new NfcRF430TAL(tag);
                 }
 
