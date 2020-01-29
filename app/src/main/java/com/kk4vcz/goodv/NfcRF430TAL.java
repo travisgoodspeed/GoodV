@@ -127,41 +127,28 @@ public class NfcRF430TAL extends NfcRF430FRL {
     public void erase() throws IOException {
         /* In the case of a TAL tag, an erase restores the tag to its factory setting,
            so that it can be initialized again.
-
-           TODO This doesn't work yet.
+           This will only work if the region and the code haven't been compromised.
+           If they have been modified, we'd need to ensure their CRC is okay too.
          */
 
         //First we unlock flash memory.
         unlock();
 
-        //Then we re-enable the E-series commands.
-        writeTITXT("@FFB8 E0 00 q");
+        //Activate
+        String fram = "50 37 B0 32 01 00 02 08 \n"; // block 0
+        // blocks 1 and 2
+        for (int i=1; i<3; i++)
+            fram += "00 00 00 00 00 00 00 00 \n";
+        // block 3
+        fram += "62 c2 00 00 00 00 00 00 \n";
+        // blocks 4 to 0x27
+        for (int i=4;i<0x28;i++)
+            fram += "00 00 00 00 00 00 00 00 \n";
 
-        /* We might overwrite the early bytes, but this doesn't seem to be enough.
-           Maybe its detecting damage, or maybe we need to overwrite more variables?
-          */
-        /*
-        writeTITXT("@F860 \n"+
-                        "3d c7 88 13 01 00 00 00 \n"+
-                        "00 00 00 00 00 00 00 00 \n"+
-                        "00 00 00 00 00 00 00 00 \n"+
-                        "62 c2 00 00 00 00 00 00 \n"+
-                        "q"
-        );*/
+        Log.d("GoodV", "erase(): Writing to FRAM: "+fram);
+        writeTITXT("@F860 \n"+fram+"q");
 
-
-        /* We might also try the E series of commands.  E0 seems to reset the state to
-           1, but it quickly falls back to the failure mode on my extracted chip. */
-
-        /*
-        vendor_e0();
-        vendor_e1();
-        vendor_e2();
-        */
-
-        //Then we lock back the device.
         lock();
-
 
         Log.v("GoodV", "Erase complete, now in stage " + getStageOfLife());
     }
@@ -186,9 +173,62 @@ public class NfcRF430TAL extends NfcRF430FRL {
 
     public String getStageOfLife() throws IOException {
         try {
-            return String.format("%02x", read(0xf864, 1)[0]);
+            byte [] stage = read(0xf864, 1);
+            switch (stage[0]) {
+                case 0x01:
+                    return "To Activate";
+                case 0x02:
+                    return "Warming up";
+                case 0x03:
+                    return "Operational";
+                case 0x05:
+                    return "Expired";
+                default:
+                    return String.format("%02x", stage[0]);
+            }
+
         }catch(ArrayIndexOutOfBoundsException e){
             return "FF";
+        }
+    }
+
+    public String getIndicator() throws IOException {
+        try {
+            byte [] value = read(0xf865, 1);
+            return String.format("%02x", value[0]);
+        }
+        catch(ArrayIndexOutOfBoundsException e){
+            return "FF";
+        }
+    }
+
+    public int getWearTime() throws IOException {
+        byte [] wearbytes = read(0xf99c, 2);
+        return (wearbytes[1] << 8) + wearbytes[0];
+    }
+
+    public byte getTrendIndex() throws IOException {
+        return read(0xf87a, 1)[0];
+    }
+
+    public byte getHistoryIndex() throws IOException {
+        return read(0xf87b, 1)[0];
+    }
+
+    public String getRegion() throws IOException {
+        try {
+            byte[] regionbytes = read(0xf9a2, 2);
+            switch (regionbytes[1]) {
+                case 0x01:
+                    return "France";
+                case 0x08:
+                    return "Israel";
+                default:
+                    return String.format("%02x %02x", regionbytes[0], regionbytes[1]);
+            }
+        }
+        catch(ArrayIndexOutOfBoundsException e){
+            return "ERROR";
         }
     }
 
@@ -205,8 +245,12 @@ public class NfcRF430TAL extends NfcRF430FRL {
     public String getInfo() throws IOException {
         String info = super.getInfo();
         info += "STAGE:    " + getStageOfLife() + "\n";
+        info += "INDICATOR:" + getIndicator() + "\n";
         info += "STATE:    " + getA1Text() + "\n";
-
+        info += "WEAR :    " + getWearTime() + " minutes\n";
+        info += "REGION:   " + getRegion() + "\n";
+        info += "Trend idx:" + getTrendIndex() + "\n";
+        info += "Hist idx: " + getHistoryIndex() + "\n";
         return info;
     }
 

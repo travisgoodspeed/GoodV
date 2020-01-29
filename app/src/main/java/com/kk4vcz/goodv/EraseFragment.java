@@ -34,11 +34,12 @@ public class EraseFragment extends Fragment implements NfcRF430Handler {
     public void tagTapped(NfcRF430 tag) {
         Log.d("GoodV", "Tag tapped to erase.");
         try {
+
             tag.erase();
 
             //And finally we brag about it.
             String info =
-                    "Erased tag "+GoodVUtil.byteArrayToHex(tag.getSerialNumber())+"\n\n";
+                    "Successfully erased tag "+GoodVUtil.byteArrayToHex(tag.getSerialNumber())+" :))\n\n";
 
             erasetext.setText(info);
         }catch(IOException e){
